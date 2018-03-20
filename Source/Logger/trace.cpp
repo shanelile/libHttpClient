@@ -17,18 +17,35 @@ namespace
 template<size_t SIZE>
 int stprintf_s(char(&buffer)[SIZE], _Printf_format_string_ char const* format ...)
 {
+#if (defined(ANDROID) || defined(__ANDROID__))
+    va_list varArgs = va_list();
+#else
     va_list varArgs = nullptr;
+#endif
     va_start(varArgs, format);
+#if (defined(ANDROID) || defined(__ANDROID__))
+    auto result = vsprintf(buffer, format, varArgs);
+#else
     auto result = vsprintf_s(buffer, format, varArgs);
+#endif
     va_end(varArgs);
     return result;
 }
 
 int stprintf_s(char* buffer, size_t size, _Printf_format_string_ char const* format ...)
 {
+#if (defined(ANDROID) || defined(__ANDROID__))
+    va_list varArgs = va_list();
+#else
     va_list varArgs = nullptr;
+#endif
     va_start(varArgs, format);
+
+#if (defined(ANDROID) || defined(__ANDROID__))
+    auto result = vsprintf(buffer, format, varArgs);
+#else
     auto result = vsprintf_s(buffer, size, format, varArgs);
+#endif
     va_end(varArgs);
     return result;
 }
@@ -36,12 +53,19 @@ int stprintf_s(char* buffer, size_t size, _Printf_format_string_ char const* for
 template<size_t SIZE>
 int vstprintf_s(char(&buffer)[SIZE], _Printf_format_string_ char const* format, va_list varArgs)
 {
+#if (defined(ANDROID) || defined(__ANDROID__))
+    return vsprintf(buffer, format, varArgs);
+#else
     return vsprintf_s(buffer, format, varArgs);
+#endif
 }
 
 void OutputDebugStringT(char const* string)
 {
+#if (defined(ANDROID) || defined(__ANDROID__))
+#else
     OutputDebugStringA(string);
+#endif
 }
 
 
@@ -51,6 +75,8 @@ void OutputDebugStringT(char const* string)
 class TraceState
 {
 public:
+    TraceState() : m_tracingClients(0), m_initTime(std::chrono::high_resolution_clock::now()), m_clientCallback(nullptr) { }
+
     void Init()
     {
         auto previousCount = m_tracingClients.fetch_add(1);
@@ -88,10 +114,9 @@ public:
     }
 
 private:
-    std::atomic<uint32_t> m_tracingClients = 0;
-    std::atomic<std::chrono::high_resolution_clock::time_point> m_initTime =
-        std::chrono::high_resolution_clock::now();
-    std::atomic<HCTraceCallback*> m_clientCallback = nullptr;
+    std::atomic<uint32_t> m_tracingClients;
+    std::atomic<std::chrono::high_resolution_clock::time_point> m_initTime;
+    std::atomic<HCTraceCallback*> m_clientCallback;
 };
 
 TraceState& GetTraceState()
@@ -125,7 +150,11 @@ void TraceMessageToDebugger(
     std::time_t  timeTInSec = static_cast<std::time_t>(timestamp / 1000);
     uint32_t     fractionMSec = static_cast<uint32_t>(timestamp % 1000);
     std::tm      fmtTime = {};
+
+#if (defined(ANDROID) || defined(__ANDROID__))
+#else
     localtime_s(&fmtTime, &timeTInSec);
+#endif
 
     char outputBuffer[BUFFER_SIZE] = {};
     // [threadId][level][time][area] message
@@ -190,9 +219,13 @@ void TraceMessageToClient(
 
 unsigned long long GetScopeId()
 {
+#if (defined(ANDROID) || defined(__ANDROID__))
+    return 0;
+#else
     LARGE_INTEGER li = {};
     QueryPerformanceCounter(&li);
     return li.QuadPart;
+#endif
 }
 
 }
@@ -230,11 +263,21 @@ void HCTraceImplMessage(
     }
 
     auto timestamp = GetTraceState().GetTimestamp();
+
+#if (defined(ANDROID) || defined(__ANDROID__))
+    auto threadId = 0;
+#else
     auto threadId = GetCurrentThreadId();
+#endif
 
     char message[4096] = {};
 
+#if (defined(ANDROID) || defined(__ANDROID__))
+    va_list varArgs = va_list();
+#else
     va_list varArgs = nullptr;
+#endif
+
     va_start(varArgs, format);
     auto result = vstprintf_s(message, format, varArgs);
     va_end(varArgs);

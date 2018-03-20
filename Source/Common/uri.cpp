@@ -182,7 +182,7 @@ String const& Uri::Query() const
 
 void Uri::SetQuery(String&& query)
 {
-    auto it = query.begin();
+    String::const_iterator it = query.begin();
     if (!ParseQuery(query, it, false) || it != query.end())
     {
         //THROW(HC_E_FAIL, "Attempting to set invalid query on URI.");
@@ -196,7 +196,7 @@ String const& Uri::Fragment() const
 
 void Uri::SetFragment(String&& fragment)
 {
-    auto it = fragment.begin();
+    String::const_iterator it = fragment.begin();
     if (!ParseFragment(fragment, it, false) || it != fragment.end())
     {
         //THROW(HC_E_FAIL, "Attempting to set invalid fragment on URI.");

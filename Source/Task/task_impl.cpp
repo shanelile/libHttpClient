@@ -136,9 +136,8 @@ void http_task_queue_completed(_In_ HC_TASK_HANDLE taskHandleId)
 
 #if HC_USE_HANDLES
     SetEvent(taskHandle->eventTaskCompleted.get());
-#endif
-
     httpSingleton->get_task_completed_queue_for_taskgroup(taskHandle->taskSubsystemId, taskHandle->taskGroupId)->set_task_completed_event();
+#endif
 
     raise_task_event(httpSingleton, task, HC_TASK_EVENT_EXECUTE_COMPLETED);
 }

@@ -177,7 +177,7 @@ try
         taskGroupId,
         HttpCallPerformExecute, (void*)call,
         HttpCallPerformWriteResults, (void*)call,
-        completionRoutine, completionRoutineContext,
+        &completionRoutine, completionRoutineContext,
         taskHandle
         );
 }

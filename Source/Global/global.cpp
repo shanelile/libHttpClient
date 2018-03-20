@@ -35,7 +35,10 @@ http_singleton::http_singleton()
     m_lastMatchingMock = nullptr;
     m_retryAllowed = true;
     m_timeoutInSeconds = DEFAULT_HTTP_TIMEOUT_IN_SECONDS;
+
+#if HC_USE_HANDLES
     m_pendingReadyHandle.set(CreateEvent(nullptr, false, false, nullptr));
+#endif
 }
 
 http_singleton::~http_singleton()
@@ -131,7 +134,10 @@ std::shared_ptr<http_task_completed_queue> http_singleton::get_task_completed_qu
     }
 
     std::shared_ptr<http_task_completed_queue> taskQueue = http_allocate_shared<http_task_completed_queue>();
+
+#if HC_USE_HANDLES
     taskQueue->m_completeReadyHandle.set(CreateEvent(nullptr, false, false, nullptr));
+#endif
 
     taskCompletedQueue[taskGroupId] = taskQueue;
     return taskQueue;
