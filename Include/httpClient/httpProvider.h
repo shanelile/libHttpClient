@@ -3,7 +3,7 @@
 
 #pragma once
 #include <httpClient/types.h>
-#include <httpClient/task.h>
+#include <httpClient/asyncProvider.h>
 #include <httpClient/trace.h>
 
 #if defined(__cplusplus)
@@ -18,7 +18,7 @@ extern "C" {
 typedef void
 (HC_CALLING_CONV* HC_HTTP_CALL_PERFORM_FUNC)(
     _In_ HC_CALL_HANDLE call,
-    _In_ HC_TASK_HANDLE taskHandle
+    _In_ AsyncBlock* asyncBlock
     );
 
 /// <summary>
@@ -147,6 +147,19 @@ HC_API HC_RESULT HC_CALLING_CONV
 HCHttpCallRequestGetRetryAllowed(
     _In_opt_ HC_CALL_HANDLE call,
     _Out_ bool* retryAllowed
+    ) HC_NOEXCEPT;
+
+/// <summary>
+/// Gets the ID number of this REST endpoint used to cache the Retry-After header for fast fail.
+/// Defaults is 0
+/// </summary>
+/// <param name="call">The handle of the HTTP call.  Pass nullptr to get the default for future calls</param>
+/// <param name="retryAfterCacheId">ID number of this REST endpoint used to cache the Retry-After header for fast fail.  1-1000 are reserved for XSAPI</param>
+/// <returns>Result code for this API operation.  Possible values are HC_OK, HC_E_INVALIDARG, or HC_E_FAIL.</returns>
+HC_API HC_RESULT HC_CALLING_CONV
+HCHttpCallRequestGetRetryCacheId(
+    _In_ HC_CALL_HANDLE call,
+    _Out_ uint32_t* retryAfterCacheId
     ) HC_NOEXCEPT;
 
 /// <summary>
@@ -311,10 +324,7 @@ typedef HC_RESULT
     _In_z_ PCSTR uri,
     _In_z_ PCSTR subProtocol,
     _In_ HC_WEBSOCKET_HANDLE websocket,
-    _In_ HC_SUBSYSTEM_ID taskSubsystemId,
-    _In_ uint64_t taskGroupId,
-    _In_opt_ void* completionRoutineContext,
-    _In_opt_ HCWebSocketCompletionRoutine completionRoutine
+    _In_ AsyncBlock* async
     );
 
 /// <summary>
@@ -326,10 +336,7 @@ typedef HC_RESULT
 (HC_CALLING_CONV* HC_WEBSOCKET_SEND_MESSAGE_FUNC)(
     _In_ HC_WEBSOCKET_HANDLE websocket,
     _In_z_ PCSTR message,
-    _In_ HC_SUBSYSTEM_ID taskSubsystemId,
-    _In_ uint64_t taskGroupId,
-    _In_opt_ void* completionRoutineContext,
-    _In_opt_ HCWebSocketCompletionRoutine completionRoutine
+    _In_ AsyncBlock* async
     );
 
 /// <summary>

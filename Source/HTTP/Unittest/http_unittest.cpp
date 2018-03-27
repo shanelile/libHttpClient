@@ -5,13 +5,12 @@
 #include "httpClient/types.h"
 #include "httpClient/httpClient.h"
 #include "../global/global.h"
-#include "../task/task_impl.h"
 
 void Internal_HCHttpCallPerform(
     _In_ HC_CALL_HANDLE call,
-    _In_ HC_TASK_HANDLE taskHandle
+    _In_ AsyncBlock* asyncBlock
     )
 {
-    HCTaskSetCompleted(taskHandle);
+    CompleteAsync(asyncBlock, S_OK, 0);
 }
 #endif

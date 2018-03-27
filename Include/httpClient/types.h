@@ -28,11 +28,6 @@
 #define HC_UWP_API 1
 #endif 
 
-#if HC_UWP_API || HC_WIN32_API || HC_XDK_API
-#undef HC_USE_HANDLES
-#define HC_USE_HANDLES 1
-#endif
-
 #ifndef _WIN32
     #ifdef _In_
     #undef _In_
@@ -103,6 +98,9 @@ typedef enum HC_RESULT
     HC_E_ALREADYINITIALISED = -9,
     HC_E_CONNECTALREADYCALLED = -10,
 } HC_RESULT;
+
+HRESULT HCtoHRESULT(_In_ HC_RESULT hc);
+HC_RESULT HRESULTtoHC(_In_ HRESULT hr);
 
 // Error codes from https://www.iana.org/assignments/websocket/websocket.xml#close-code-number
 typedef enum HC_WEBSOCKET_CLOSE_STATUS

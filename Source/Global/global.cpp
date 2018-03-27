@@ -35,10 +35,6 @@ http_singleton::http_singleton()
     m_lastMatchingMock = nullptr;
     m_retryAllowed = true;
     m_timeoutInSeconds = DEFAULT_HTTP_TIMEOUT_IN_SECONDS;
-
-#if HC_USE_HANDLES
-    m_pendingReadyHandle.set(CreateEvent(nullptr, false, false, nullptr));
-#endif
 }
 
 http_singleton::~http_singleton()
@@ -107,71 +103,55 @@ void cleanup_http_singleton()
     }
 }
 
-
-http_internal_queue<HC_TASK*>& http_singleton::get_task_pending_queue(_In_ uint64_t taskSubsystemId)
+void http_singleton::set_retry_state(
+    _In_ uint32_t retryAfterCacheId,
+    _In_ const http_retry_after_api_state& state)
 {
-    auto it = m_taskPendingQueue.find(taskSubsystemId);
-    if (it != m_taskPendingQueue.end())
+    std::lock_guard<std::mutex> lock(m_retryAfterCacheLock); // STL is not safe for multithreaded writes
+    m_retryAfterCache[retryAfterCacheId] = state;
+}
+
+http_retry_after_api_state http_singleton::get_retry_state(_In_ uint32_t retryAfterCacheId)
+{
+    auto it = m_retryAfterCache.find(retryAfterCacheId); // STL is multithread read safe
+    if (it != m_retryAfterCache.end())
     {
-        return it->second;
+        return it->second; // returning a copy of state struct
     }
 
-    return m_taskPendingQueue[taskSubsystemId];
+    return http_retry_after_api_state();
 }
 
-
-std::shared_ptr<http_task_completed_queue> http_singleton::get_task_completed_queue_for_taskgroup(
-    _In_ HC_SUBSYSTEM_ID taskSubsystemId,
-    _In_ uint64_t taskGroupId
-    )
+void http_singleton::clear_retry_state(_In_ uint32_t retryAfterCacheId)
 {
-    std::lock_guard<std::mutex> lock(m_taskCompletedQueueLock);
-    auto& taskCompletedQueue = m_taskCompletedQueue[taskSubsystemId];
-    auto it = taskCompletedQueue.find(taskGroupId);
-    if (it != taskCompletedQueue.end())
-    {
-        return it->second;
-    }
-
-    std::shared_ptr<http_task_completed_queue> taskQueue = http_allocate_shared<http_task_completed_queue>();
-
-#if HC_USE_HANDLES
-    taskQueue->m_completeReadyHandle.set(CreateEvent(nullptr, false, false, nullptr));
-#endif
-
-    taskCompletedQueue[taskGroupId] = taskQueue;
-    return taskQueue;
-}
-
-#if HC_USE_HANDLES
-HANDLE http_singleton::get_pending_ready_handle()
-{
-    return m_pendingReadyHandle.get();
-}
-
-void http_singleton::set_task_pending_ready()
-{
-    SetEvent(get_pending_ready_handle());
-}
-#endif
-
-#if HC_USE_HANDLES
-HANDLE http_task_completed_queue::get_complete_ready_handle()
-{
-    return m_completeReadyHandle.get();
-}
-
-void http_task_completed_queue::set_task_completed_event()
-{
-    SetEvent(get_complete_ready_handle());
-}
-#endif
-
-http_internal_queue<HC_TASK*>& http_task_completed_queue::get_completed_queue()
-{
-    return m_completedQueue;
+    std::lock_guard<std::mutex> lock(m_retryAfterCacheLock); // STL is not safe for multithreaded writes
+    m_retryAfterCache.erase(retryAfterCacheId);
 }
 
 NAMESPACE_XBOX_HTTP_CLIENT_END
 
+HRESULT HCtoHRESULT(_In_ HC_RESULT hc)
+{
+    switch (hc)
+    {
+        case HC_OK: return S_OK;
+        case HC_E_FAIL: return E_FAIL;
+        case HC_E_POINTER: return E_POINTER;
+        case HC_E_INVALIDARG: return E_INVALIDARG;
+        case HC_E_OUTOFMEMORY: return E_OUTOFMEMORY;
+        default: return E_FAIL;
+    }
+}
 
+HC_RESULT HRESULTtoHC(_In_ HRESULT hr)
+{
+    switch (hr)
+    {
+        case S_OK: return HC_OK;
+        case E_FAIL: return HC_E_FAIL;
+        case E_POINTER: return HC_E_POINTER;
+        case E_INVALIDARG: return HC_E_INVALIDARG;
+        case E_OUTOFMEMORY: return HC_E_OUTOFMEMORY;
+        default: return HC_E_FAIL;
+    }
+}

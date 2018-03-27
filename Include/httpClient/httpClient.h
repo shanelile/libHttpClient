@@ -3,9 +3,10 @@
 
 #pragma once
 #include <httpClient/types.h>
-#include <httpClient/task.h>
 #include <httpClient/mock.h>
 #include <httpClient/trace.h>
+#include <httpClient/async.h>
+#include <httpClient/asyncQueue.h>
 
 #if defined(__cplusplus)
 extern "C" {
@@ -196,12 +197,12 @@ HCSettingsGetLogLevel(
 /// Then call HCHttpCallRequestSet*() to prepare the HC_CALL_HANDLE
 /// Then call HCHttpCallPerform() to perform HTTP call using the HC_CALL_HANDLE.
 /// This call is asynchronous, so the work will be done on a background thread and will return via the callback.
-/// This task executes immediately so no need to call HCTaskProcessNextPendingTask().
-/// Call HCTaskProcessNextCompletedTask(taskGroupId) on the thread where you want the 
-/// callback execute, using the same taskGroupId as passed to HCHttpCallPerform().
-/// 
-/// Inside the callback or after the task is done using HCTaskIsCompleted() or 
-/// HCTaskWaitForCompleted(), then get the result of the HTTP call by calling 
+///
+/// The perform call is asynchronous, so the work will be done on a background thread which calls 
+/// DispatchAsyncQueue( ..., AsyncQueueCallbackType_Work ).  
+///
+/// The results will return to the callback on the thread that calls 
+/// DispatchAsyncQueue( ..., AsyncQueueCallbackType_Completion ), then get the result of the HTTP call by calling 
 /// HCHttpCallResponseGet*() to get the HTTP response of the HC_CALL_HANDLE.
 /// 
 /// When the HC_CALL_HANDLE is no longer needed, call HCHttpCallCloseHandle() to free the 
@@ -215,28 +216,18 @@ HCHttpCallCreate(
     ) HC_NOEXCEPT;
 
 /// <summary>
-/// Callback definition for the HTTP completion routine used by HCHttpCallPerform()
-/// </summary>
-/// <param name="completionRoutineContext">The context passed to the completion routine</param>
-/// <param name="call">The handle of the HTTP call</param>
-typedef void(* HCHttpCallPerformCompletionRoutine)(
-    _In_opt_ void* completionRoutineContext,
-    _In_ HC_CALL_HANDLE call
-    );
-
-/// <summary>
 /// Perform HTTP call using the HC_CALL_HANDLE
 ///
 /// First create a HTTP handle using HCHttpCallCreate()
 /// Then call HCHttpCallRequestSet*() to prepare the HC_CALL_HANDLE
 /// Then call HCHttpCallPerform() to perform HTTP call using the HC_CALL_HANDLE.
 /// This call is asynchronous, so the work will be done on a background thread and will return via the callback.
-/// This task executes immediately so no need to call HCTaskProcessNextPendingTask().
-/// Call HCTaskProcessNextCompletedTask(taskGroupId) on the thread where you want the 
-/// callback execute, using the same taskGroupId as passed to HCHttpCallPerform().
-/// 
-/// Inside the callback or after the task is done using HCTaskIsCompleted() or 
-/// HCTaskWaitForCompleted(), then get the result of the HTTP call by calling 
+///
+/// The perform call is asynchronous, so the work will be done on a background thread which calls 
+/// DispatchAsyncQueue( ..., AsyncQueueCallbackType_Work ).  
+///
+/// The results will return to the callback on the thread that calls 
+/// DispatchAsyncQueue( ..., AsyncQueueCallbackType_Completion ), then get the result of the HTTP call by calling 
 /// HCHttpCallResponseGet*() to get the HTTP response of the HC_CALL_HANDLE.
 /// 
 /// When the HC_CALL_HANDLE is no longer needed, call HCHttpCallCloseHandle() to free the 
@@ -245,32 +236,12 @@ typedef void(* HCHttpCallPerformCompletionRoutine)(
 /// HCHttpCallPerform can only be called once.  Create new HC_CALL_HANDLE to repeat the call.
 /// </summary>
 /// <param name="call">The handle of the HTTP call</param>
-/// <param name="taskHandle">The task handle returned by the operation. If the API fails, HC_TASK_HANDLE will be 0</param>
-/// <param name="taskSubsystemId">
-/// The task subsystem ID to assign to this task.  This is the ID of the caller's subsystem.
-/// If this isn't needed or unknown, just pass in 0.
-/// This is used to subdivide results so each subsystem (XSAPI, XAL, Mixer, etc) 
-/// can each expose thier own version of ProcessNextPendingTask() and 
-/// ProcessNextCompletedTask() APIs that operate independently.
-/// </param>
-/// <param name="taskGroupId">
-/// The task group ID to assign to this task.  The ID is defined by the caller and can be any number.
-/// HCTaskProcessNextCompletedTask(taskSubsystemId, taskGroupId) will only process completed tasks that have a
-/// matching taskSubsystemId and taskGroupId.  This enables the caller to split the where results are
-/// returned between between a set of app threads and a set of subsystems.
-/// If the group ID isn't needed, just pass in 0.
-/// </param>
-/// <param name="completionRoutineContext">The context to pass in to the completionRoutine callback</param>
-/// <param name="completionRoutine">A callback that's called when the HTTP call completes</param>
+/// <param name="asyncBlock">The AsyncBlock that defines the async operation</param>
 /// <returns>Result code for this API operation.  Possible values are HC_OK, HC_E_INVALIDARG, HC_E_OUTOFMEMORY, or HC_E_FAIL.</returns>
 HC_API HC_RESULT HC_CALLING_CONV
 HCHttpCallPerform(
     _In_ HC_CALL_HANDLE call,
-    _Out_opt_ HC_TASK_HANDLE* taskHandle,
-    _In_ HC_SUBSYSTEM_ID taskSubsystemId,
-    _In_ uint64_t taskGroupId,
-    _In_opt_ void* completionRoutineContext,
-    _In_opt_ HCHttpCallPerformCompletionRoutine completionRoutine
+    _In_ AsyncBlock* asyncBlock
     ) HC_NOEXCEPT;
 
 /// <summary>
@@ -340,7 +311,7 @@ HC_API HC_RESULT HC_CALLING_CONV
 HCHttpCallRequestSetRequestBodyString(
     _In_ HC_CALL_HANDLE call,
     _In_z_ PCSTR requestBodyString
-) HC_NOEXCEPT;
+    ) HC_NOEXCEPT;
 
 /// <summary>
 /// Set a request header for the HTTP call
@@ -369,6 +340,19 @@ HC_API HC_RESULT HC_CALLING_CONV
 HCHttpCallRequestSetRetryAllowed(
     _In_opt_ HC_CALL_HANDLE call,
     _In_ bool retryAllowed
+    ) HC_NOEXCEPT;
+
+/// <summary>
+/// ID number of this REST endpoint used to cache the Retry-After header for fast fail.
+/// This must be called prior to calling HCHttpCallPerform.
+/// </summary>
+/// <param name="call">The handle of the HTTP call.  Pass nullptr to set the default for future calls</param>
+/// <param name="retryAfterCacheId">ID number of this REST endpoint used to cache the Retry-After header for fast fail.  1-1000 are reserved for XSAPI</param>
+/// <returns>Result code for this API operation.  Possible values are HC_OK, or HC_E_FAIL.</returns>
+HC_API HC_RESULT HC_CALLING_CONV
+HCHttpCallRequestSetRetryCacheId(
+    _In_opt_ HC_CALL_HANDLE call,
+    _In_ uint32_t retryAfterCacheId
     ) HC_NOEXCEPT;
 
 /// <summary>
@@ -632,19 +616,21 @@ HCWebSocketSetFunctions(
     _In_opt_ HC_WEBSOCKET_CLOSE_EVENT_FUNC closeFunc
     ) HC_NOEXCEPT;
 
+
 /// <summary>
-/// Callback definition for the WebSocket completion routine used by HCWebSocketConnect() and HCWebSocketSendMessage()
+/// Used by HCWebSocketConnect() and HCWebSocketSendMessage()
 /// </summary>
-/// <param name="completionRoutineContext">The context passed to the completion routine</param>
-/// <param name="websocket">The handle of the HTTP call</param>
-/// <param name="errorCode">The error code of the call. Possible values are HC_OK, or HC_E_FAIL.</param>
-/// <param name="platformErrorCode">The platform specific network error code of the call to be used for logging / debugging</param>
-typedef void(* HCWebSocketCompletionRoutine)(
-    _In_opt_ void* completionRoutineContext,
-    _In_ HC_WEBSOCKET_HANDLE websocket,
-    _In_ HC_RESULT errorCode,
-    _In_ uint32_t platformErrorCode
-    );
+struct WebSocketCompletionResult
+{
+    /// <param name="websocket">The handle of the HTTP call</param>
+    HC_WEBSOCKET_HANDLE websocket;
+
+    /// <param name="errorCode">The error code of the call. Possible values are HC_OK, or HC_E_FAIL.</param>
+    HC_RESULT errorCode;
+
+    /// <param name="platformErrorCode">The platform specific network error code of the call to be used for logging / debugging</param>
+    uint32_t platformErrorCode;
+};
 
 /// <summary>
 /// Connects to the WebSocket.
@@ -659,10 +645,13 @@ HCWebSocketConnect(
     _In_z_ PCSTR uri,
     _In_z_ PCSTR subProtocol,
     _In_ HC_WEBSOCKET_HANDLE websocket,
-    _In_ HC_SUBSYSTEM_ID taskSubsystemId,
-    _In_ uint64_t taskGroupId,
-    _In_opt_ void* completionRoutineContext,
-    _In_opt_ HCWebSocketCompletionRoutine completionRoutine
+    _In_ AsyncBlock* async
+    ) HC_NOEXCEPT;
+
+HC_API HC_RESULT HC_CALLING_CONV
+HCGetWebSocketConnectResult(
+    _In_ AsyncBlock* async,
+    _In_ WebSocketCompletionResult* result
     ) HC_NOEXCEPT;
 
 /// <summary>
@@ -674,10 +663,13 @@ HC_API HC_RESULT HC_CALLING_CONV
 HCWebSocketSendMessage(
     _In_ HC_WEBSOCKET_HANDLE websocket,
     _In_z_ PCSTR message,
-    _In_ HC_SUBSYSTEM_ID taskSubsystemId,
-    _In_ uint64_t taskGroupId,
-    _In_opt_ void* completionRoutineContext,
-    _In_opt_ HCWebSocketCompletionRoutine completionRoutine
+    _In_ AsyncBlock* async
+    ) HC_NOEXCEPT;
+
+HC_API HC_RESULT HC_CALLING_CONV
+HCGetWebSocketSendMessageResult(
+    _In_ AsyncBlock* async,
+    _In_ WebSocketCompletionResult* result
     ) HC_NOEXCEPT;
 
 /// <summary>
