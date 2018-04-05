@@ -2,36 +2,36 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include "pch.h"
-#include "../hcwebsocket.h"
+#include "../HCWebSocket.h"
 
 using namespace xbox::httpclient;
 
 
-HC_RESULT Internal_HCWebSocketConnect(
-    _In_z_ PCSTR uri,
-    _In_z_ PCSTR subProtocol,
-    _In_ HC_WEBSOCKET_HANDLE websocket,
+HRESULT Internal_HCWebSocketConnect(
+    _In_z_ UTF8CSTR uri,
+    _In_z_ UTF8CSTR subProtocol,
+    _In_ hc_websocket_handle websocket,
     _In_ AsyncBlock* async)
 {
     // TODO
-    return HC_OK;
+    return S_OK;
 }
 
-HC_RESULT Internal_HCWebSocketSendMessage(
-    _In_ HC_WEBSOCKET_HANDLE websocket,
-    _In_z_ PCSTR message,
+HRESULT Internal_HCWebSocketSendMessage(
+    _In_ hc_websocket_handle websocket,
+    _In_z_ UTF8CSTR message,
     _In_ AsyncBlock* async)
 {
     // TODO
-    return HC_OK;
+    return S_OK;
 }
 
-HC_RESULT Internal_HCWebSocketDisconnect(
-    _In_ HC_WEBSOCKET_HANDLE websocket,
-    _In_ HC_WEBSOCKET_CLOSE_STATUS closeStatus
+HRESULT Internal_HCWebSocketDisconnect(
+    _In_ hc_websocket_handle websocket,
+    _In_ HCWebSocketCloseStatus closeStatus
     )
 {
     // TODO
-    return HC_OK;
+    return S_OK;
 }
 

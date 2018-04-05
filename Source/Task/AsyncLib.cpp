@@ -16,7 +16,7 @@ struct AsyncState
     HANDLE waitEvent;
     PTP_TIMER timer;
     void* token;
-    PCSTR function;
+    UTF8CSTR function;
 };
 
 static void CALLBACK CompletionCallback(_In_ void* context);
@@ -382,7 +382,7 @@ STDAPI BeginAsync(
     _In_ AsyncBlock* asyncBlock,
     _In_opt_ void* context,
     _In_opt_ void* token,
-    _In_opt_ PCSTR function,
+    _In_opt_ UTF8CSTR function,
     _In_ AsyncProvider* provider)
 {
     HRESULT hr = AllocState(asyncBlock);
@@ -509,7 +509,7 @@ STDAPI GetAsyncResult(
         }
         else if (token != state->token)
         {
-            WCHAR buf[100];
+            WCHAR buf[100] = { 0 };
             if (state->function != nullptr)
             {
                 swprintf_s(

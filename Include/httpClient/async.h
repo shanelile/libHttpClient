@@ -13,7 +13,7 @@
 /// the system thread pool. Completions will be invoked on the thread that initiated
 /// the async call when that thread is alertable.
 /// </summary>
-typedef HANDLE async_queue_t;
+typedef void* async_queue_t;
 
 /// <summary>
 /// An AsyncBlock defines a piece of asynchronous work.  An async block can be used
@@ -90,3 +90,4 @@ typedef HRESULT CALLBACK AsyncWork(_In_ AsyncBlock* asyncBlock);
 STDAPI RunAsync(
     _In_ AsyncBlock* asyncBlock,
     _In_ AsyncWork* work);
+

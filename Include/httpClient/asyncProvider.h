@@ -7,7 +7,7 @@ typedef enum AsyncOp
     /// <summary>
     /// An async provider is invoked with this opcode when ScheduleAsync has been called to
     /// schedule work. Implementations should perform their asynchronous work and then call
-    /// CompleteAsync with the data payload size. If additonal work needs to be done they
+    /// CompleteAsync with the data payload size. If additional work needs to be done they
     /// can schedule it and return E_PENDING.
     /// </summary>
     AsyncOp_DoWork,
@@ -75,7 +75,7 @@ STDAPI BeginAsync(
     _In_ AsyncBlock* asyncBlock,
     _In_opt_ void* context,
     _In_opt_ void* token,
-    _In_opt_ PCSTR function,
+    _In_opt_ UTF8CSTR function,
     _In_ AsyncProvider* provider);
 
 /// <summary>
@@ -108,4 +108,5 @@ STDAPI GetAsyncResult(
     _In_opt_ void* token,
     _In_ size_t bufferSize,
     _Out_writes_bytes_opt_(bufferSize) void* buffer);
+
 

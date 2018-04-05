@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #pragma once
 #include <httpClient/httpProvider.h>
+#include "../HTTP/httpcall.h"
 
 NAMESPACE_XBOX_HTTP_CLIENT_BEGIN
 
@@ -10,7 +11,7 @@ namespace log
     class logger;
 }
 
-struct http_retry_after_api_state
+typedef struct http_retry_after_api_state
 {
     http_retry_after_api_state() : statusCode(0)
     {
@@ -27,9 +28,9 @@ struct http_retry_after_api_state
 
     chrono_clock_t::time_point retryAfterTime;
     uint32_t statusCode;
-};
+} http_retry_after_api_state;
 
-struct http_singleton
+typedef struct http_singleton
 {
     http_singleton();
     ~http_singleton();
@@ -44,19 +45,19 @@ struct http_singleton
 
     // HTTP state
     std::atomic<std::uint64_t> m_lastId;
-    HC_HTTP_CALL_PERFORM_FUNC m_performFunc;
+    HCCallPerformFunction m_performFunc;
     bool m_retryAllowed;
     uint32_t m_timeoutInSeconds;
     uint32_t m_timeoutWindowInSeconds;
     uint32_t m_retryDelayInSeconds;
 
     // WebSocket state
-    HC_WEBSOCKET_MESSAGE_FUNC m_websocketMessageFunc;
-    HC_WEBSOCKET_CLOSE_EVENT_FUNC m_websocketCloseEventFunc;
+    HCWebSocketMessageFunction m_websocketMessageFunc;
+    HCWebSocketCloseEventFunction m_websocketCloseEventFunc;
 
-    HC_WEBSOCKET_CONNECT_FUNC m_websocketConnectFunc;
-    HC_WEBSOCKET_SEND_MESSAGE_FUNC m_websocketSendMessageFunc;
-    HC_WEBSOCKET_DISCONNECT_FUNC m_websocketDisconnectFunc;
+    HCWebSocketConnectFunction m_websocketConnectFunc;
+    HCWebSocketSendMessageFunction m_websocketSendMessageFunc;
+    HCWebSocketDisconnectFunction m_websocketDisconnectFunc;
 
     // Mock state
     std::mutex m_mocksLock;
@@ -66,11 +67,11 @@ struct http_singleton
 
     std::mutex m_sharedPtrsLock;
     http_internal_unordered_map<void*, std::shared_ptr<void>> m_sharedPtrs;
-};
+} http_singleton;
 
 
 std::shared_ptr<http_singleton> get_http_singleton(bool assertIfNull);
-HC_RESULT init_http_singleton();
+HRESULT init_http_singleton();
 void cleanup_http_singleton();
 
 

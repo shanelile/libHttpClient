@@ -7,128 +7,128 @@
 using namespace xbox::httpclient;
 
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseGetResponseString(
-    _In_ HC_CALL_HANDLE call,
-    _Out_ PCSTR* responseString
+    _In_ hc_call_handle_t call,
+    _Out_ UTF8CSTR* responseString
     ) HC_NOEXCEPT
 try
 {
     if (call == nullptr || responseString == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     *responseString = call->responseString.c_str();
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseSetResponseString(
-    _In_ HC_CALL_HANDLE call,
-    _In_z_ PCSTR responseString
+    _In_ hc_call_handle_t call,
+    _In_z_ UTF8CSTR responseString
     ) HC_NOEXCEPT
 try 
 {
     if (call == nullptr || responseString == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     call->responseString = responseString;
     HC_TRACE_INFORMATION(HTTPCLIENT, "HCHttpCallResponseSetResponseString [ID %llu]: responseString=%.2048s", call->id, responseString);
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseGetStatusCode(
-    _In_ HC_CALL_HANDLE call,
+    _In_ hc_call_handle_t call,
     _Out_ uint32_t* statusCode
     )
 try 
 {
     if (call == nullptr || statusCode == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     *statusCode = call->statusCode;
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseSetStatusCode(
-    _In_ HC_CALL_HANDLE call,
+    _In_ hc_call_handle_t call,
     _In_ uint32_t statusCode
     ) HC_NOEXCEPT
 try 
 {
     if (call == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     call->statusCode = statusCode;
     HC_TRACE_INFORMATION(HTTPCLIENT, "HCHttpCallResponseSetStatusCode [ID %llu]: statusCode=%u",
         call->id, statusCode);
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseGetNetworkErrorCode(
-    _In_ HC_CALL_HANDLE call,
-    _Out_ HC_RESULT* networkErrorCode,
+    _In_ hc_call_handle_t call,
+    _Out_ HRESULT* networkErrorCode,
     _Out_ uint32_t* platformNetworkErrorCode
     ) HC_NOEXCEPT
 try 
 {
     if (call == nullptr || networkErrorCode == nullptr || platformNetworkErrorCode == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     *networkErrorCode = call->networkErrorCode;
     *platformNetworkErrorCode = call->platformNetworkErrorCode;
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseSetNetworkErrorCode(
-    _In_ HC_CALL_HANDLE call,
-    _In_ HC_RESULT networkErrorCode,
+    _In_ hc_call_handle_t call,
+    _In_ HRESULT networkErrorCode,
     _In_ uint32_t platformNetworkErrorCode
     ) HC_NOEXCEPT
 try 
 {
     if (call == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     call->networkErrorCode = networkErrorCode;
     call->platformNetworkErrorCode = platformNetworkErrorCode;
     HC_TRACE_INFORMATION(HTTPCLIENT, "HCHttpCallResponseSetErrorCode [ID %llu]: errorCode=%08X (%08X)",
         call->id, networkErrorCode, platformNetworkErrorCode);
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseGetHeader(
-    _In_ HC_CALL_HANDLE call,
-    _In_z_ PCSTR headerName,
-    _Out_ PCSTR* headerValue
+    _In_ hc_call_handle_t call,
+    _In_z_ UTF8CSTR headerName,
+    _Out_ UTF8CSTR* headerValue
     ) HC_NOEXCEPT
 try 
 {
     if (call == nullptr || headerName == nullptr || headerValue == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     auto it = call->responseHeaders.find(headerName);
@@ -140,39 +140,39 @@ try
     {
         *headerValue = nullptr;
     }
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseGetNumHeaders(
-    _In_ HC_CALL_HANDLE call,
+    _In_ hc_call_handle_t call,
     _Out_ uint32_t* numHeaders
     ) HC_NOEXCEPT
 try 
 {
     if (call == nullptr || numHeaders == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     *numHeaders = static_cast<uint32_t>(call->responseHeaders.size());
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseGetHeaderAtIndex(
-    _In_ HC_CALL_HANDLE call,
+    _In_ hc_call_handle_t call,
     _In_ uint32_t headerIndex,
-    _Out_ PCSTR* headerName,
-    _Out_ PCSTR* headerValue
+    _Out_ UTF8CSTR* headerName,
+    _Out_ UTF8CSTR* headerValue
     ) HC_NOEXCEPT
 try
 {
     if (call == nullptr || headerName == nullptr || headerValue == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     uint32_t index = 0;
@@ -182,7 +182,7 @@ try
         {
             *headerName = it->first.c_str();
             *headerValue = it->second.c_str();
-            return HC_OK;
+            return S_OK;
         }
 
         index++;
@@ -190,27 +190,27 @@ try
 
     *headerName = nullptr;
     *headerValue = nullptr;
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 
-HC_API HC_RESULT HC_CALLING_CONV
+STDAPI 
 HCHttpCallResponseSetHeader(
-    _In_ HC_CALL_HANDLE call,
-    _In_z_ PCSTR headerName,
-    _In_z_ PCSTR headerValue
+    _In_ hc_call_handle_t call,
+    _In_z_ UTF8CSTR headerName,
+    _In_z_ UTF8CSTR headerValue
     ) HC_NOEXCEPT
 try 
 {
     if (call == nullptr || headerName == nullptr || headerValue == nullptr)
     {
-        return HC_E_INVALIDARG;
+        return E_INVALIDARG;
     }
 
     call->responseHeaders[headerName] = headerValue;
     HC_TRACE_INFORMATION(HTTPCLIENT, "HCHttpCallResponseSetResponseHeader [ID %llu]: %s=%s",
         call->id, headerName, headerValue);
-    return HC_OK;
+    return S_OK;
 }
 CATCH_RETURN()
 

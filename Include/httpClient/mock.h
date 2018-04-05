@@ -1,11 +1,7 @@
 // Copyright (c) Microsoft Corporation
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 #pragma once
 
-#if defined(__cplusplus)
-extern "C" {
-#endif
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // Mock APIs
@@ -19,10 +15,9 @@ extern "C" {
 /// Then call HCMockAddMock() to add it to the system
 /// </summary>
 /// <param name="call">The handle of the mock HTTP call</param>
-/// <returns>Result code for this API operation.  Possible values are HC_OK, HC_E_INVALIDARG, or HC_E_FAIL.</returns>
-HC_API HC_RESULT HC_CALLING_CONV
-HCMockCallCreate(
-    _Out_ HC_MOCK_CALL_HANDLE* call
+/// <returns>Result code for this API operation.  Possible values are S_OK, E_INVALIDARG, or E_FAIL.</returns>
+STDAPI HCMockCallCreate(
+    _Out_ hc_mock_call_handle* call
     ) HC_NOEXCEPT;
 
 
@@ -61,12 +56,11 @@ HCMockCallCreate(
 /// <param name="requestBodySize">
 /// The size of requestBodyBytes in bytes.
 /// </param>
-/// <returns>Result code for this API operation.  Possible values are HC_OK, HC_E_INVALIDARG, HC_E_OUTOFMEMORY, or HC_E_FAIL.</returns>
-HC_API HC_RESULT HC_CALLING_CONV
-HCMockAddMock(
-    _In_ HC_MOCK_CALL_HANDLE call,
-    _In_opt_z_ PCSTR method,
-    _In_opt_z_ PCSTR url,
+/// <returns>Result code for this API operation.  Possible values are S_OK, E_INVALIDARG, E_OUTOFMEMORY, or E_FAIL.</returns>
+STDAPI HCMockAddMock(
+    _In_ hc_mock_call_handle call,
+    _In_opt_z_ UTF8CSTR method,
+    _In_opt_z_ UTF8CSTR url,
     _In_reads_bytes_opt_(requestBodySize) const PBYTE requestBodyBytes,
     _In_ uint32_t requestBodySize
     ) HC_NOEXCEPT;
@@ -74,9 +68,8 @@ HCMockAddMock(
 /// <summary>
 /// Removes and cleans up all mock calls added by HCMockAddMock
 /// </summary>
-/// <returns>Result code for this API operation.  Possible values are HC_OK, or HC_E_FAIL.</returns>
-HC_API HC_RESULT HC_CALLING_CONV
-HCMockClearMocks() HC_NOEXCEPT;
+/// <returns>Result code for this API operation.  Possible values are S_OK, or E_FAIL.</returns>
+STDAPI HCMockClearMocks() HC_NOEXCEPT;
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -88,11 +81,10 @@ HCMockClearMocks() HC_NOEXCEPT;
 /// </summary>
 /// <param name="call">The handle of the HTTP call</param>
 /// <param name="responseString">the response body string of the HTTP call</param>
-/// <returns>Result code for this API operation.  Possible values are HC_OK, HC_E_INVALIDARG, HC_E_OUTOFMEMORY, or HC_E_FAIL.</returns>
-HC_API HC_RESULT HC_CALLING_CONV
-HCMockResponseSetResponseString(
-    _In_ HC_MOCK_CALL_HANDLE call,
-    _In_z_ PCSTR responseString
+/// <returns>Result code for this API operation.  Possible values are S_OK, E_INVALIDARG, E_OUTOFMEMORY, or E_FAIL.</returns>
+STDAPI HCMockResponseSetResponseString(
+    _In_ hc_mock_call_handle call,
+    _In_z_ UTF8CSTR responseString
     ) HC_NOEXCEPT;
 
 /// <summary>
@@ -100,10 +92,9 @@ HCMockResponseSetResponseString(
 /// </summary>
 /// <param name="call">The handle of the HTTP call</param>
 /// <param name="statusCode">the HTTP status code of the HTTP call response</param>
-/// <returns>Result code for this API operation.  Possible values are HC_OK, HC_E_INVALIDARG, or HC_E_FAIL.</returns>
-HC_API HC_RESULT HC_CALLING_CONV
-HCMockResponseSetStatusCode(
-    _In_ HC_MOCK_CALL_HANDLE call,
+/// <returns>Result code for this API operation.  Possible values are S_OK, E_INVALIDARG, or E_FAIL.</returns>
+STDAPI HCMockResponseSetStatusCode(
+    _In_ hc_mock_call_handle call,
     _In_ uint32_t statusCode
     ) HC_NOEXCEPT;
 
@@ -113,11 +104,10 @@ HCMockResponseSetStatusCode(
 /// <param name="call">The handle of the HTTP call</param>
 /// <param name="networkErrorCode">The network error code of the HTTP call.</param>
 /// <param name="platformNetworkErrorCode">The platform specific network error code of the HTTP call to be used for logging / debugging</param>
-/// <returns>Result code for this API operation.  Possible values are HC_OK, HC_E_INVALIDARG, or HC_E_FAIL.</returns>
-HC_API HC_RESULT HC_CALLING_CONV
-HCMockResponseSetNetworkErrorCode(
-    _In_ HC_MOCK_CALL_HANDLE call,
-    _In_ HC_RESULT networkErrorCode,
+/// <returns>Result code for this API operation.  Possible values are S_OK, E_INVALIDARG, or E_FAIL.</returns>
+STDAPI HCMockResponseSetNetworkErrorCode(
+    _In_ hc_mock_call_handle call,
+    _In_ HRESULT networkErrorCode,
     _In_ uint32_t platformNetworkErrorCode
     ) HC_NOEXCEPT;
 
@@ -127,16 +117,11 @@ HCMockResponseSetNetworkErrorCode(
 /// <param name="call">The handle of the HTTP call</param>
 /// <param name="headerName">Response header name for the HTTP call</param>
 /// <param name="headerValue">Response header value for the HTTP call</param>
-/// <returns>Result code for this API operation.  Possible values are HC_OK, HC_E_INVALIDARG, HC_E_OUTOFMEMORY, or HC_E_FAIL.</returns>
-HC_API HC_RESULT HC_CALLING_CONV
-HCMockResponseSetHeader(
-    _In_ HC_MOCK_CALL_HANDLE call,
-    _In_z_ PCSTR headerName,
-    _In_z_ PCSTR headerValue
+/// <returns>Result code for this API operation.  Possible values are S_OK, E_INVALIDARG, E_OUTOFMEMORY, or E_FAIL.</returns>
+STDAPI HCMockResponseSetHeader(
+    _In_ hc_mock_call_handle call,
+    _In_z_ UTF8CSTR headerName,
+    _In_z_ UTF8CSTR headerValue
     ) HC_NOEXCEPT;
 
-
-#if defined(__cplusplus)
-} // end extern "C"
-#endif // defined(__cplusplus)
 

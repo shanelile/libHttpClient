@@ -109,7 +109,7 @@ MainPage::MainPage()
     InitializeComponent();
 
     HCGlobalInitialize();
-    HCSettingsSetLogLevel(HC_LOG_LEVEL::LOG_VERBOSE);
+    HCSettingsSetLogLevel(HCLogLevel_Verbose);
 
     uint32_t sharedAsyncQueueId = 0;
     CreateSharedAsyncQueue(
@@ -255,10 +255,9 @@ void HttpTestApp::MainPage::Connect_Button_Click(Platform::Object^ sender, Windo
 
     ClearLog();
 
-    HC_RESULT hr = HCWebSocketCreate(&m_websocket);
+    HRESULT hr = HCWebSocketCreate(&m_websocket);
     LogToUI(format_string("HCWebSocketCreate: %d", hr));
 
-    HC_SUBSYSTEM_ID taskSubsystemId = HC_SUBSYSTEM_ID_GAME;
     void* callbackContext = nullptr;
 
     auto headers = ExtractHeadersFromHeadersString(requestHeaders);
@@ -288,7 +287,6 @@ void HttpTestApp::MainPage::Connect_Button_Click(Platform::Object^ sender, Windo
 
 void HttpTestApp::MainPage::SendMessage_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    HC_SUBSYSTEM_ID taskSubsystemId = HC_SUBSYSTEM_ID_GAME;
     void* callbackContext = nullptr;
 
     std::string requestBody = to_utf8string(TextboxRequestString->Text->Data());
@@ -305,13 +303,13 @@ void HttpTestApp::MainPage::SendMessage_Button_Click(Platform::Object^ sender, W
         delete asyncBlock;
     };
 
-    HC_RESULT hr = HCWebSocketSendMessage(m_websocket, requestBody.c_str(), asyncBlock);
+    HRESULT hr = HCWebSocketSendMessage(m_websocket, requestBody.c_str(), asyncBlock);
     LogToUI(format_string("HCWebSocketSendMessage: %d", hr));
 }
 
 void HttpTestApp::MainPage::Close_Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    HC_RESULT hr = HCWebSocketDisconnect(m_websocket);
+    HRESULT hr = HCWebSocketDisconnect(m_websocket);
     LogToUI(format_string("HCWebSocketCloseHandle: %d", hr));
     m_websocket = nullptr;
 }

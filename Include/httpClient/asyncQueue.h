@@ -157,3 +157,5 @@ STDAPI AddAsyncCallbackSubmitted(
 STDAPI_(void) RemoveAsyncQueueCallbackSubmitted(
     _In_ async_queue_t queue,
     _In_ uint32_t token);
+
+
