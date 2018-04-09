@@ -84,15 +84,29 @@
 #define __analysis_assume(condition)
 #endif
 
+#ifndef _Out_writes_bytes_opt_
+#define _Out_writes_bytes_opt_(size)
+#endif
+
+#ifndef _Null_terminated_
+#define _Null_terminated_
+#endif
+
 // TODO: Add check for android
 #ifndef CONST
 #define CONST const
+#endif
+
+#ifndef EXTERN_C
+#define EXTERN_C
 #endif
 
 typedef unsigned char BYTE;
 typedef char CHAR;
 typedef wchar_t WCHAR;
 
+typedef void *PVOID;
 typedef CONST CHAR *PCSTR;
 typedef BYTE *PBYTE;
 typedef CONST WCHAR *PCWSTR;
+typedef PVOID HANDLE;
