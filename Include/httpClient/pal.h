@@ -44,6 +44,14 @@
 
     #define CALLBACK
 
+    #ifndef __cdecl
+    #define __cdecl 
+    #endif
+
+    #ifndef EXTERN_C
+    #define EXTERN_C
+    #endif
+
     #define SEVERITY_SUCCESS    0
     #define SEVERITY_ERROR      1
 
@@ -74,8 +82,84 @@
     #define E_ACCESSDENIED                   _HRESULTYPEDEF_(0x80070005L)
     #define E_ABORT                          _HRESULTYPEDEF_(0x80000007L)
 
+    #ifndef CONST
+    #define CONST const
+    #endif
+
+    typedef unsigned char BYTE;
+    typedef wchar_t WCHAR;
+    typedef void *PVOID;
+
+    typedef BYTE *PBYTE;
+    typedef CONST WCHAR *PCWSTR;
+    typedef PVOID HANDLE;
+
+    #ifndef _Printf_format_string_
+    #define _Printf_format_string_ 
+    #endif
+
+    #ifndef _Post_invalid_
+    #define _Post_invalid_ 
+    #endif
+
     #ifndef _In_
     #define _In_
+    #endif
+
+    #ifndef _In_opt_
+    #define _In_opt_ 
+    #endif
+
+    #ifndef _In_z_
+    #define _In_z_ 
+    #endif
+
+    #ifndef _In_opt_z_
+    #define _In_opt_z_ 
+    #endif
+
+    #ifndef _In_reads_bytes_
+    #define _In_reads_bytes_(size) 
+    #endif
+
+    #ifndef _In_reads_
+    #define _In_reads_(size) 
+    #endif
+
+    #ifndef _In_reads_bytes_opt_
+    #define _In_reads_bytes_opt_(size) 
+    #endif
+
+    #ifndef _Inout_
+    #define _Inout_ 
+    #endif
+
+    #ifndef _Out_
+    #define _Out_ 
+    #endif
+
+    #ifndef _Out_opt_
+    #define _Out_opt_ 
+    #endif
+
+    #ifndef _Out_writes_to_
+    #define _Out_writes_to_(bytes, buffer)
+    #endif
+
+    #ifndef _Out_writes_to_opt_
+    #define _Out_writes_to_opt_(buffersize, size)
+    #endif
+
+    #ifndef _Out_writes_bytes_opt_
+    #define _Out_writes_bytes_opt_(size)
+    #endif
+
+    #ifndef _Outptr_
+    #define _Outptr_ 
+    #endif
+
+    #ifndef _Outptr_result_bytebuffer_maybenull_
+    #define _Outptr_result_bytebuffer_maybenull_(size)
     #endif
 
     #ifndef _Ret_maybenull_
@@ -96,6 +180,10 @@
 
     #ifndef STDAPI_
     #define STDAPI_(type)           EXTERN_C type STDAPIVCALLTYPE
+    #endif
+
+    #ifndef _Null_terminated_
+    #define _Null_terminated_ 
     #endif
 
 #endif

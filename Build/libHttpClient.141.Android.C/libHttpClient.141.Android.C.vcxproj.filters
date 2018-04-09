@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Task\AsyncLib.cpp">
+      <Filter>C++ Source\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Task\AsyncQueue.cpp">
+      <Filter>C++ Source\Task</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Global\global.cpp">
+      <Filter>C++ Source\Global</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Global\global_publics.cpp">
+      <Filter>C++ Source\Global</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Common\pch.cpp">
+      <Filter>C++ Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Common\uri.cpp">
+      <Filter>C++ Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Common\utils.cpp">
+      <Filter>C++ Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Global\mem.cpp">
+      <Filter>C++ Source\Global</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\HTTP\httpcall.cpp">
+      <Filter>C++ Source\HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\HTTP\httpcall_request.cpp">
+      <Filter>C++ Source\HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\HTTP\httpcall_response.cpp">
+      <Filter>C++ Source\HTTP</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Logger\log_publics.cpp">
+      <Filter>C++ Source\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Logger\trace.cpp">
+      <Filter>C++ Source\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Mock\mock.cpp">
+      <Filter>C++ Source\Mock</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Mock\mock_publics.cpp">
+      <Filter>C++ Source\Mock</Filter>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\WebSocket\hcwebsocket.cpp">
+      <Filter>C++ Source\WebSocket</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\HTTP\Android\http_android.cpp">
+      <Filter>C++ Source\HTTP\Android</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\async.h">
+      <Filter>C++ Public Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\asyncProvider.h">
+      <Filter>C++ Public Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\asyncQueue.h">
+      <Filter>C++ Public Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Task\EntryList.h">
+      <Filter>C++ Source\Task</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Common\buildver.h">
+      <Filter>C++ Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Global\global.h">
+      <Filter>C++ Source\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\httpClient.h">
+      <Filter>C++ Public Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\httpProvider.h">
+      <Filter>C++ Public Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\mock.h">
+      <Filter>C++ Public Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\pal.h">
+      <Filter>C++ Public Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\trace.h">
+      <Filter>C++ Public Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Common\pch.h">
+      <Filter>C++ Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Common\pch_common.h">
+      <Filter>C++ Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Common\utils.h">
+      <Filter>C++ Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Common\uri.h">
+      <Filter>C++ Source\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Global\mem.h">
+      <Filter>C++ Source\Global</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\HTTP\httpcall.h">
+      <Filter>C++ Source\HTTP</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Logger\trace_internal.h">
+      <Filter>C++ Source\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Mock\mock.h">
+      <Filter>C++ Source\Mock</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\WebSocket\hcwebsocket.h">
+      <Filter>C++ Source\WebSocket</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="C++ Public Includes">
+      <UniqueIdentifier>{c56914d5-85df-4ff5-8763-d87724d3c927}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source">
+      <UniqueIdentifier>{97c755b2-29e3-497e-89e9-0686399e26db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\Common">
+      <UniqueIdentifier>{9764a263-0820-4fd8-abc2-cf9dabf0face}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\Task">
+      <UniqueIdentifier>{8cc43d1a-2733-45ad-a25f-1f9f075635b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\Global">
+      <UniqueIdentifier>{624b6951-75a8-4294-a536-c51cd5ad6ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\HTTP">
+      <UniqueIdentifier>{557d169c-1761-4a3a-8fd5-a07cbb05a3f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\Logger">
+      <UniqueIdentifier>{d0f6c4e8-41b3-4a82-90fd-bd8e178a05dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\Mock">
+      <UniqueIdentifier>{7b93c152-ab8a-4ae1-a5f2-e4cd7939787a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\WebSocket">
+      <UniqueIdentifier>{818d8981-c550-47c8-9163-4b463f89f6cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\HTTP\Android">
+      <UniqueIdentifier>{d612a5c2-2bf4-43fa-89ec-4e70108a5726}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

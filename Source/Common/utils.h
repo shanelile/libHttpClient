@@ -20,15 +20,6 @@ bool StringToUint(String const& s, uint64_t& v, int32_t base = 0);
 bool StringToUint4(char const* begin, char const* end, uint64_t& v, int32_t base);
 
 template<class TBuffer>
-void AppendFormat(TBuffer& buffer, _In_z_ _Printf_format_string_ char const* format, ...)
-{
-    va_list args{};
-    va_start(args, format);
-    FormatHelper(buffer, format, args);
-    va_end(args);
-}
-
-template<class TBuffer>
 void FormatHelper(TBuffer& buffer, _In_z_ _Printf_format_string_ char const* format, va_list args)
 {
     va_list args1{};
@@ -50,6 +41,15 @@ void FormatHelper(TBuffer& buffer, _In_z_ _Printf_format_string_ char const* for
     //UNREFERENCED_LOCAL(written);
 
     buffer.resize(buffer.size() - 1); // drop null terminator
+}
+
+template<class TBuffer>
+void AppendFormat(TBuffer& buffer, _In_z_ _Printf_format_string_ char const* format, ...)
+{
+    va_list args{};
+    va_start(args, format);
+    FormatHelper(buffer, format, args);
+    va_end(args);
 }
 
 inline

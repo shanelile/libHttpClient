@@ -58,7 +58,7 @@ void BasicAsciiLowercase(String& s)
     {
         if ((c & 0x7F) == c)
         {
-            return std::tolower(c, classicLocale);
+            return (unsigned char)std::tolower((char)c, classicLocale);
         }
         else
         {
