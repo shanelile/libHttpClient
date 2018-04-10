@@ -95,7 +95,7 @@ HRESULT perform_http_call(
     )
 {
     HRESULT hr = BeginAsync(asyncBlock, (void*)call, (void*)perform_http_call, __FUNCTION__,
-        [](AsyncOp opCode, AsyncProviderData* data)
+        [](AsyncOp opCode, const AsyncProviderData* data)
     {
         switch (opCode)
         {
@@ -287,7 +287,7 @@ bool should_fast_fail(
     // If the Retry-After will happen first, just wait till Retry-After is done, and don't fast fail
     if (apiState.retryAfterTime < timeoutTime)
     {
-        auto retryAfterCountInMS = static_cast<uint32_t>(remainingTimeBeforeRetryAfterInMS.count());
+        call->delayBeforeRetry = remainingTimeBeforeRetryAfterInMS;
         return false;
     }
     else
@@ -300,7 +300,7 @@ typedef struct retry_context
 {
     HC_CALL* call;
     AsyncBlock* outerAsyncBlock;
-    async_queue_t outerQueue;
+    async_queue_handle_t outerQueue;
 } retry_context;
 
 void retry_http_call_until_done(
@@ -338,7 +338,7 @@ void retry_http_call_until_done(
         }
     }
 
-    async_queue_t nestedQueue;
+    async_queue_handle_t nestedQueue;
     CreateNestedAsyncQueue(retryContext->outerQueue, &nestedQueue);
     AsyncBlock* nestedBlock = new AsyncBlock;
 
@@ -407,7 +407,7 @@ try
     retry_context* rawRetryContext = static_cast<retry_context*>(shared_ptr_cache::store<retry_context>(retryContext));
 
     HRESULT hr = BeginAsync(asyncBlock, (void*)rawRetryContext, (void*)HCHttpCallPerform, __FUNCTION__,
-        [](_In_ AsyncOp op, _Inout_ AsyncProviderData* data)
+        [](_In_ AsyncOp op, _In_ const AsyncProviderData* data)
     {
         switch (op)
         {

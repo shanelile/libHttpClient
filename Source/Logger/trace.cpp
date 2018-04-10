@@ -217,7 +217,7 @@ void TraceMessageToClient(
 
 }
 
-void HCTraceSetClientCallback(HCTraceCallback* callback)
+STDAPI_(VOID) HCTraceSetClientCallback(HCTraceCallback* callback)
 {
     GetTraceState().SetClientCallback(callback);
 }
