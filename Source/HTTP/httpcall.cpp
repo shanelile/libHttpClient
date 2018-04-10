@@ -94,7 +94,7 @@ HRESULT perform_http_call(
     _In_ AsyncBlock* asyncBlock
     )
 {
-    HRESULT hr = BeginAsync(asyncBlock, call, perform_http_call, __FUNCTION__,
+    HRESULT hr = BeginAsync(asyncBlock, (void*)call, (void*)perform_http_call, __FUNCTION__,
         [](AsyncOp opCode, AsyncProviderData* data)
     {
         switch (opCode)
@@ -235,7 +235,7 @@ bool http_call_should_retry(
         if (retryAfter.count() > 0)
         {
             // Use either the waitTime or Retry-After header, whichever is bigger
-            call->delayBeforeRetry = std::chrono::milliseconds(__max(waitTime.count(), retryAfter.count()));
+            call->delayBeforeRetry = std::chrono::milliseconds(std::max(waitTime.count(), retryAfter.count()));
         }
         else
         {
@@ -341,7 +341,13 @@ void retry_http_call_until_done(
     async_queue_t nestedQueue;
     CreateNestedAsyncQueue(retryContext->outerQueue, &nestedQueue);
     AsyncBlock* nestedBlock = new AsyncBlock;
+
+#ifdef _WIN32
     ZeroMemory(nestedBlock, sizeof(AsyncBlock));
+#else
+    nestedBlock = { 0 };
+#endif
+
     nestedBlock->queue = nestedQueue;
     nestedBlock->context = retryContext;
 
@@ -400,7 +406,7 @@ try
     retryContext->outerQueue = asyncBlock->queue;
     retry_context* rawRetryContext = static_cast<retry_context*>(shared_ptr_cache::store<retry_context>(retryContext));
 
-    HRESULT hr = BeginAsync(asyncBlock, rawRetryContext, HCHttpCallPerform, __FUNCTION__,
+    HRESULT hr = BeginAsync(asyncBlock, (void*)rawRetryContext, (void*)HCHttpCallPerform, __FUNCTION__,
         [](_In_ AsyncOp op, _Inout_ AsyncProviderData* data)
     {
         switch (op)

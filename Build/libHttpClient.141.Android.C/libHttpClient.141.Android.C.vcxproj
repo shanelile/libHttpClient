@@ -91,6 +91,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\HTTP\Android\http_android.cpp" />
+    <ClCompile Include="..\..\Source\Logger\Android\android_trace.cpp" />
+    <ClCompile Include="..\..\Source\WebSocket\Android\android_websocket.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Common\buildver.h" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Common\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

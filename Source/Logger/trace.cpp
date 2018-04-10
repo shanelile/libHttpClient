@@ -17,18 +17,38 @@ namespace
 template<size_t SIZE>
 int stprintf_s(char(&buffer)[SIZE], _Printf_format_string_ char const* format ...)
 {
+#ifdef _WIN32
     va_list varArgs = nullptr;
+#else
+    va_list varArgs;
+#endif
+
     va_start(varArgs, format);
+
+#ifdef _WIN32
     auto result = vsprintf_s(buffer, format, varArgs);
+#else
+    auto result = vsprintf(buffer, format, varArgs);
+#endif
+
     va_end(varArgs);
     return result;
 }
 
 int stprintf_s(char* buffer, size_t size, _Printf_format_string_ char const* format ...)
 {
+#ifdef _WIN32
     va_list varArgs = nullptr;
+#else
+    va_list varArgs;
+#endif
+
     va_start(varArgs, format);
+#ifdef _WIN32
     auto result = vsprintf_s(buffer, size, format, varArgs);
+#else
+    auto result = vsprintf(buffer, format, varArgs);
+#endif
     va_end(varArgs);
     return result;
 }
@@ -36,14 +56,17 @@ int stprintf_s(char* buffer, size_t size, _Printf_format_string_ char const* for
 template<size_t SIZE>
 int vstprintf_s(char(&buffer)[SIZE], _Printf_format_string_ char const* format, va_list varArgs)
 {
+#ifdef _WIN32
     return vsprintf_s(buffer, format, varArgs);
+#else
+    return vsprintf(buffer, format, varArgs);
+#endif
 }
 
 void OutputDebugStringT(char const* string)
 {
-    OutputDebugStringA(string);
+    OutputDebugString(string);
 }
-
 
 //------------------------------------------------------------------------------
 // Trace implementation
@@ -51,6 +74,8 @@ void OutputDebugStringT(char const* string)
 class TraceState
 {
 public:
+    TraceState() : m_tracingClients(0), m_initTime(std::chrono::high_resolution_clock::now()), m_clientCallback(nullptr) { }
+
     void Init()
     {
         auto previousCount = m_tracingClients.fetch_add(1);
@@ -88,10 +113,9 @@ public:
     }
 
 private:
-    std::atomic<uint32_t> m_tracingClients = 0;
-    std::atomic<std::chrono::high_resolution_clock::time_point> m_initTime =
-        std::chrono::high_resolution_clock::now();
-    std::atomic<HCTraceCallback*> m_clientCallback = nullptr;
+    std::atomic<uint32_t> m_tracingClients;
+    std::atomic<std::chrono::high_resolution_clock::time_point> m_initTime;
+    std::atomic<HCTraceCallback*> m_clientCallback;
 };
 
 TraceState& GetTraceState()
@@ -125,7 +149,10 @@ void TraceMessageToDebugger(
     std::time_t  timeTInSec = static_cast<std::time_t>(timestamp / 1000);
     uint32_t     fractionMSec = static_cast<uint32_t>(timestamp % 1000);
     std::tm      fmtTime = {};
+
+#ifdef _WIN32
     localtime_s(&fmtTime, &timeTInSec);
+#endif
 
     char outputBuffer[BUFFER_SIZE] = {};
     // [threadId][level][time][area] message
@@ -188,13 +215,6 @@ void TraceMessageToClient(
 #endif
 }
 
-unsigned long long GetScopeId()
-{
-    LARGE_INTEGER li = {};
-    QueryPerformanceCounter(&li);
-    return li.QuadPart;
-}
-
 }
 
 void HCTraceSetClientCallback(HCTraceCallback* callback)
@@ -230,11 +250,16 @@ void HCTraceImplMessage(
     }
 
     auto timestamp = GetTraceState().GetTimestamp();
-    auto threadId = GetCurrentThreadId();
+    auto threadId = GetThreadId();
 
     char message[4096] = {};
 
+#ifdef _WIN32
     va_list varArgs = nullptr;
+#else
+    va_list varArgs;
+#endif
+
     va_start(varArgs, format);
     auto result = vstprintf_s(message, format, varArgs);
     va_end(varArgs);

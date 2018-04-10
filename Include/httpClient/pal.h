@@ -52,6 +52,8 @@
     #define EXTERN_C
     #endif
 
+    #define __FUNCTION__ nullptr
+
     #define SEVERITY_SUCCESS    0
     #define SEVERITY_ERROR      1
 
@@ -81,6 +83,7 @@
     #define E_FAIL                           _HRESULTYPEDEF_(0x80004005L)
     #define E_ACCESSDENIED                   _HRESULTYPEDEF_(0x80070005L)
     #define E_ABORT                          _HRESULTYPEDEF_(0x80000007L)
+    #define E_PENDING                        _HRESULTYPEDEF_(0x80000008L) // TODO: Look up.
 
     #ifndef CONST
     #define CONST const
@@ -90,6 +93,7 @@
     typedef wchar_t WCHAR;
     typedef void *PVOID;
 
+    typedef unsigned long DWORD; 
     typedef BYTE *PBYTE;
     typedef CONST WCHAR *PCWSTR;
     typedef PVOID HANDLE;

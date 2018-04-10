@@ -52,6 +52,12 @@
     <ClCompile Include="..\..\Source\HTTP\Android\http_android.cpp">
       <Filter>C++ Source\HTTP\Android</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\WebSocket\Android\android_websocket.cpp">
+      <Filter>C++ Source\WebSocket\Android</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Logger\Android\android_trace.cpp">
+      <Filter>C++ Source\Logger\Android</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\async.h">
@@ -145,6 +151,12 @@
     </Filter>
     <Filter Include="C++ Source\HTTP\Android">
       <UniqueIdentifier>{d612a5c2-2bf4-43fa-89ec-4e70108a5726}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\WebSocket\Android">
+      <UniqueIdentifier>{bad6cba7-9533-419c-87bc-aea637e69908}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="C++ Source\Logger\Android">
+      <UniqueIdentifier>{256a1c57-8bc5-4731-b2de-34dcc1ac3d52}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
