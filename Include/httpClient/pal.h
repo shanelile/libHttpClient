@@ -48,6 +48,10 @@
     #define __cdecl 
     #endif
 
+    #ifndef __forceinline
+    #define __forceinline
+    #endif
+
     #ifndef EXTERN_C
     #define EXTERN_C
     #endif
@@ -90,13 +94,20 @@
     #endif
 
     typedef unsigned char BYTE;
-    typedef wchar_t WCHAR;
+    typedef unsigned long DWORD;
     typedef void *PVOID;
+    typedef wchar_t WCHAR;
+    typedef void VOID;
 
-    typedef unsigned long DWORD; 
+    typedef BYTE BOOLEAN;
     typedef BYTE *PBYTE;
     typedef CONST WCHAR *PCWSTR;
     typedef PVOID HANDLE;
+
+    typedef struct _LIST_ENTRY {
+        struct _LIST_ENTRY  *Flink;
+        struct _LIST_ENTRY  *Blink;
+    } LIST_ENTRY, *PLIST_ENTRY;
 
     #ifndef _Printf_format_string_
     #define _Printf_format_string_ 
@@ -156,6 +167,10 @@
 
     #ifndef _Out_writes_bytes_opt_
     #define _Out_writes_bytes_opt_(size)
+    #endif
+
+    #ifndef _Out_writes_bytes_to_opt_
+    #define _Out_writes_bytes_to_opt_(size, buffer)
     #endif
 
     #ifndef _Outptr_

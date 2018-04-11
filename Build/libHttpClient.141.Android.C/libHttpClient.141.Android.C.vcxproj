@@ -42,6 +42,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>Clang_5_0</PlatformToolset>
     <AndroidAPILevel>android-21</AndroidAPILevel>
+    <UseOfStl>c++_static</UseOfStl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -70,14 +71,12 @@
         $(ProjectDir)..\..\Source\Common;
         $(ProjectDir)..\..\Source\Logger;
         $(ProjectDir)..\..\Include;
+        $(ProjectDir)..\..\Include\httpClient;
         %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
       <ExceptionHandling>Enabled</ExceptionHandling>
       <AdditionalOptions>-D ANDROID_API=1</AdditionalOptions>
-      <CppLanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">c++1y</CppLanguageStandard>
-      <CppLanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">c++1y</CppLanguageStandard>
-      <CppLanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">c++1y</CppLanguageStandard>
-      <CppLanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">c++1y</CppLanguageStandard>
+      <CppLanguageStandard>c++1y</CppLanguageStandard>
       <Verbose Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">true</Verbose>
       <Verbose Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">true</Verbose>
       <Verbose Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</Verbose>
@@ -119,9 +118,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Mock\mock.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Mock\mock.h" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Mock\mock_publics.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Task\AsyncLib.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\Task\AsyncQueue.cpp" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\Task\EntryList.h" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Source\WebSocket\hcwebsocket.cpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Source\WebSocket\hcwebsocket.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\async.h" />
@@ -132,6 +129,9 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\mock.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\pal.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Include\httpClient\trace.h" />
+    <ClInclude Include="..\..\Source\Common\EntryList.h" />
+    <ClInclude Include="..\..\Source\Task\Callback.h" />
+    <ClInclude Include="..\..\Source\Task\Callback_STL.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
