@@ -12,5 +12,14 @@ unsigned int GetThreadId() {
 
 unsigned long long GetScopeId() {
     // TODO: 
+    /* Windows implementation is:
+    unsigned long long GetScopeId()
+{
+    LARGE_INTEGER li = {};
+    QueryPerformanceCounter(&li);
+    return li.QuadPart;
+}    
+    */
+
     return 0;
 }

@@ -214,13 +214,6 @@ void TraceMessageToClient(
     }
 }
 
-unsigned long long GetScopeId()
-{
-    LARGE_INTEGER li = {};
-    QueryPerformanceCounter(&li);
-    return li.QuadPart;
-}
-
 }
 
 STDAPI_(void) HCTraceSetTraceToDebugger(_In_ bool traceToDebugger)
