@@ -407,7 +407,11 @@ HCGetWebSocketConnectResult(
     ) HC_NOEXCEPT
 try
 {
+#ifdef WIN32
     return GetAsyncResult(asyncBlock, HCWebSocketConnect, sizeof(WebSocketCompletionResult), result, nullptr);
+#else
+    return E_NOTIMPL;
+#endif
 }
 CATCH_RETURN()
 
@@ -418,6 +422,10 @@ HCGetWebSocketSendMessageResult(
     ) HC_NOEXCEPT
 try
 {
+#ifdef WIN32
     return GetAsyncResult(asyncBlock, HCWebSocketSendMessage, sizeof(WebSocketCompletionResult), result, nullptr);
+#else
+    return E_NOTIMPL;
+#endif
 }
 CATCH_RETURN()

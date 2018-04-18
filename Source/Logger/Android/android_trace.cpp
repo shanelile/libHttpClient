@@ -1,12 +1,13 @@
 #include "pch.h"
+#include <unistd.h>
+#include <Android/log.h>
 
 void OutputDebugString(char const* string) {
-    // TODO:
+    __android_log_print(ANDROID_LOG_DEFAULT, "libHttpClient", "%s", string);
 }
 
 unsigned int GetThreadId() {
-    // TODO:
-    return 0;
+    return gettid();
 }
 
 unsigned long long GetScopeId() {
