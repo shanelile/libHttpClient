@@ -2,6 +2,8 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 #pragma once
 
+#include <httpClient/pal.h>
+
 /// <summary>
 /// An async_queue_handle_t contains async work.  When you make an async call, that call is placed
 /// on an async queue for execution.  An async queue has two sides:  a worker side and
@@ -111,3 +113,5 @@ STDAPI_(void) CancelAsync(
 STDAPI RunAsync(
     _In_ AsyncBlock* asyncBlock,
     _In_ AsyncWork* work);
+
+

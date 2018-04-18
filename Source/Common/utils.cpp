@@ -89,7 +89,7 @@ HRESULT StdExceptionToResult(std::exception const& e, _In_z_ char const* file, u
     HC_TRACE_ERROR(HTTPCLIENT, "[%d] std::exception reached api boundary: %s\n    %s:%u",
         E_FAIL, e.what(), file, line);
 
-    HC_ASSERT(false);
+    ASSERT(false);
     return E_FAIL;
 }
 
@@ -98,8 +98,26 @@ HRESULT UnknownExceptionToResult(_In_z_ char const* file, uint32_t line)
     HC_TRACE_ERROR(HTTPCLIENT, "[%d] unknown exception reached api boundary\n    %s:%u",
         E_FAIL, file, line);
 
-    HC_ASSERT(false);
+    ASSERT(false);
     return E_FAIL;
 }
+
+// Validate the datamodel detected by httpClient/config.h
+#if HC_DATAMODEL == HC_DATAMODEL_ILP32
+static_assert(sizeof(int) == 4, "int is not 32 bits");
+static_assert(sizeof(long) == 4, "long is not 32 bits");
+static_assert(sizeof(void*) == 4, "pointer is not 32 bits");
+#elif HC_DATAMODEL == HC_DATAMODEL_LLP64
+static_assert(sizeof(int) == 4, "int is not 32 bits");
+static_assert(sizeof(long) == 4, "long is not 32 bits");
+static_assert(sizeof(long long) == 8, "long long is not 64 bits");
+static_assert(sizeof(void*) == 8, "pointer is not 64 bits");
+#elif HC_DATAMODEL == HC_DATAMODEL_LP64
+static_assert(sizeof(int) == 4, "int is not 32 bits");
+static_assert(sizeof(long) == 8, "long is not 64 bits");
+static_assert(sizeof(void*) == 8, "pointer is not 64 bits");
+#else
+#error Invalid datamodel selected by httpClient/config.h
+#endif
 
 NAMESPACE_XBOX_HTTP_CLIENT_DETAIL_END

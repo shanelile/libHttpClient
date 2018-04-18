@@ -79,6 +79,7 @@ public:
     void Init()
     {
         auto previousCount = m_tracingClients.fetch_add(1);
+        m_traceToDebugger = false;
         if (previousCount == 0)
         {
             m_initTime = std::chrono::high_resolution_clock::now();
@@ -93,6 +94,16 @@ public:
     bool IsSetup() const
     {
         return m_tracingClients > 0;
+    }
+
+    bool GetTraceToDebugger()
+    {
+        return m_traceToDebugger;
+    }
+
+    void SetTraceToDebugger(_In_ bool traceToDebugger)
+    {
+        m_traceToDebugger = traceToDebugger;
     }
 
     void SetClientCallback(HCTraceCallback* callback)
@@ -116,6 +127,7 @@ private:
     std::atomic<uint32_t> m_tracingClients;
     std::atomic<std::chrono::high_resolution_clock::time_point> m_initTime;
     std::atomic<HCTraceCallback*> m_clientCallback;
+    bool m_traceToDebugger;
 };
 
 TraceState& GetTraceState()
@@ -130,9 +142,11 @@ void TraceMessageToDebugger(
     unsigned int threadId,
     uint64_t timestamp,
     char const* message
-)
+    )
 {
-#if HC_TRACE_TO_DEBUGGER
+    if (!GetTraceState().GetTraceToDebugger())
+        return;
+
     // Needs to match the HCTraceLevel enum
     static char const* traceLevelNames[] =
     {
@@ -165,7 +179,7 @@ void TraceMessageToDebugger(
         fractionMSec,
         areaName,
         message
-    );
+        );
     if (written <= 0)
     {
         return;
@@ -183,13 +197,6 @@ void TraceMessageToDebugger(
     }
 
     OutputDebugStringT(outputBuffer);
-#else
-    (void)areaName;
-    (void)level;
-    (void)threadId;
-    (void)timestamp;
-    (void)message;
-#endif
 }
 
 void TraceMessageToClient(
@@ -198,26 +205,31 @@ void TraceMessageToClient(
     unsigned int threadId,
     uint64_t timestamp,
     char const* message
-)
+    )
 {
-#if HC_TRACE_TO_CLIENT
     auto callback = GetTraceState().GetClientCallback();
     if (callback)
     {
         callback(areaName, level, threadId, timestamp, message);
     }
-#else
-    (void)areaName;
-    (void)level;
-    (void)threadId;
-    (void)timestamp;
-    (void)message;
-#endif
+}
+
+unsigned long long GetScopeId()
+{
+    LARGE_INTEGER li = {};
+    QueryPerformanceCounter(&li);
+    return li.QuadPart;
 }
 
 }
 
-STDAPI_(VOID) HCTraceSetClientCallback(HCTraceCallback* callback)
+STDAPI_(void) HCTraceSetTraceToDebugger(_In_ bool traceToDebugger)
+{
+    GetTraceState().SetTraceToDebugger(traceToDebugger);
+}
+
+
+STDAPI_(VOID) HCTraceSetClientCallback(_In_opt_ HCTraceCallback* callback)
 {
     GetTraceState().SetClientCallback(callback);
 }
@@ -227,7 +239,7 @@ void HCTraceImplMessage(
     enum HCTraceLevel level,
     _Printf_format_string_ char const* format,
     ...
-)
+    )
 {
     if (!area)
     {
@@ -245,6 +257,12 @@ void HCTraceImplMessage(
     }
 
     if (!format)
+    {
+        return;
+    }
+
+    // Only do work if there's reason to
+    if (GetTraceState().GetClientCallback() == nullptr && !GetTraceState().GetTraceToDebugger())
     {
         return;
     }
