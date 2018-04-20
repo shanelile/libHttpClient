@@ -50,6 +50,10 @@
     #define __forceinline
     #endif
 
+    #ifndef _Null_terminated_
+    #define _Null_terminated_ 
+    #endif
+
     #ifndef EXTERN_C
     #define EXTERN_C
     #endif
@@ -147,12 +151,32 @@
     #define _Inout_ 
     #endif
 
+    #ifndef _Inout_updates_bytes_
+    #define _Inout_updates_bytes_(size)
+    #endif
+
     #ifndef _Out_
     #define _Out_ 
     #endif
 
+    #ifndef _Out_range_
+    #define _Out_range_(x, y)  
+    #endif
+
     #ifndef _Out_opt_
     #define _Out_opt_ 
+    #endif
+
+    #ifndef _Out_writes_
+    #define _Out_writes_(bytes)
+    #endif
+
+    #ifndef _Out_writes_z_
+    #define _Out_writes_z_(bytes)
+    #endif
+
+    #ifndef _Out_writes_bytes_
+    #define _Out_writes_bytes_(bytes)
     #endif
 
     #ifndef _Out_writes_to_
@@ -185,6 +209,26 @@
 
     #ifndef _Post_writable_byte_size_
     #define _Post_writable_byte_size_(X)
+    #endif
+
+    #ifndef _Field_z_
+    #define _Field_z_ 
+    #endif
+
+    #ifndef _Field_size_
+    #define _Field_size_(bytes) 
+    #endif
+
+    #ifndef _Field_size_bytes_
+    #define _Field_size_bytes_(bytes) 
+    #endif
+
+    #ifndef _Field_size_bytes_opt_
+    #define _Field_size_bytes_opt_(bytes) 
+    #endif
+
+    #ifndef __analysis_assume
+    #define __analysis_assume(condition)
     #endif
 
     #ifndef STDAPIVCALLTYPE
